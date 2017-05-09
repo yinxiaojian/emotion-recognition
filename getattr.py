@@ -36,19 +36,25 @@ def get_vector(data):
     sc2adiff_mean = np.mean(np.fabs(sc_diff_2th))
     sc2gdiff_mean = sc2adiff_mean / sc_std
 
-    fft_data = np.fft.fft(data) # Calculate ftt data return complex array
-    scfft_mean = np.mean(fft_data)
-    scfft_median = np.median(fft_data)
-    scfft_std = np.std(fft_data)
-    scfft_min = np.min(fft_data)
-    scfft_max = np.max(fft_data)
-    scfft_range = scfft_max - scfft_min
+    # fft_data = np.fft.fft(data) # Calculate ftt data return complex array
+    # scfft_mean = np.mean(fft_data)
+    # scfft_median = np.median(fft_data)
+    # scfft_std = np.std(fft_data)
+    # scfft_min = np.min(fft_data)
+    # scfft_max = np.max(fft_data)
+    # scfft_range = scfft_max - scfft_min
 
+    # vector = [sc_mean, sc_median, sc_std, sc_min, sc_max, sc_range, sc_min_ratio, sc_max_ratio,
+    #           sc1diff_mean, sc1diff_median, sc1diff_std, sc1diff_min, sc1diff_max,
+    #           sc1diff_range, sc1diff_min_ratio, sc1diff_max_ratio, sc1adiff_mean, sc1gdiff_mean,
+    #           sc2diff_mean, sc2diff_median, sc2diff_std, sc2diff_min, sc2diff_max,
+    #           sc2diff_range, sc2diff_min_ratio, sc2diff_max_ratio, sc2adiff_mean, sc2gdiff_mean,
+    #           scfft_mean, scfft_median, scfft_std, scfft_min, scfft_max, scfft_range
+    #           ]
     vector = [sc_mean, sc_median, sc_std, sc_min, sc_max, sc_range, sc_min_ratio, sc_max_ratio,
               sc1diff_mean, sc1diff_median, sc1diff_std, sc1diff_min, sc1diff_max,
               sc1diff_range, sc1diff_min_ratio, sc1diff_max_ratio, sc1adiff_mean, sc1gdiff_mean,
               sc2diff_mean, sc2diff_median, sc2diff_std, sc2diff_min, sc2diff_max,
-              sc2diff_range, sc2diff_min_ratio, sc2diff_max_ratio, sc2adiff_mean, sc2gdiff_mean,
-              scfft_mean, scfft_median, scfft_std, scfft_min, scfft_max, scfft_range
+              sc2diff_range, sc2diff_min_ratio, sc2diff_max_ratio, sc2adiff_mean, sc2gdiff_mean
               ]
     return vector
