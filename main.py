@@ -1,8 +1,14 @@
 import os
+import re
 import generatevector
+import getattr
+import database
+import time
+import serial
 from my_svm import MySvm
 from sklearn.externals import joblib
-import numpy as np
+import matplotlib.pyplot as plt
+
 
 def train_module():
     if os.path.isfile('model\\happy_model.m'):
@@ -25,16 +31,61 @@ def train_module():
 
 
 def predict_result():
-    clf = joblib.load('model\\happy_model.m')
-    select = joblib.load('model\\vector_select.m')
-    vector = [[933.333333333,4.5,3068.7153483,1,11111,11110,0.0833333333333,925.916666667,1010.0,1.0,3192.39061178,-50,11105,11155,-4.54545454545,1009.54545455,1019.27272727,0.332149649474,1110.5,1.0,3331.7255064,-100,11105,11205,-10.0,1110.5,1131.5,0.3687210678]]
-    new_vector = select.transform(vector)
-    print(new_vector)
-    result = clf.predict(new_vector)
-    print(result)
+    ser = serial.Serial(  # 下面这些参数根据情况修改
+        port='COM6',
+        baudrate=1200,
+        parity=serial.PARITY_ODD,
+        stopbits=serial.STOPBITS_TWO,
+        bytesize=serial.SEVENBITS
+    )
+    serial_data = []
+    plt.xlim(0, 100)
+    plt.ylim(300, 700)
+    plt.title('GSR')
+    plt.ion()
+    i = 0
+    j = 0
+    id = 0
+    while True:
+        line = ser.readline()
+        line = int(line)
+        serial_data.append(line)
+        if i > 100:
+            plt.xlim(i - 100, i)
+        plt.plot(serial_data)
+        i += 1
+        j += 1
+        if j >= 50:
+            clf = joblib.load('model\\happy_model.m')
+            select = joblib.load('model\\vector_select.m')
+            vector = getattr.get_vector(serial_data)
+            new_vector = select.transform(vector)
+            print(new_vector)
+            result = clf.predict(new_vector)
+            if result[0] == '2':
+                clf = joblib.load('model\\sad_model.m')
+                result = clf.predict(new_vector)
+            j = 0
+            plt.plot([i, i], [300, 700], 'r--')
+            if result[0] == '1':
+                plt.annotate('happy', xy=(i, 600), xytext=(i - 10, 600), arrowprops=dict(facecolor='red', shrink=0.05))
+                res = 1
+                database.insert(id, res)
+            elif result[0] == '2':
+                plt.annotate('normal', xy=(i, 600), xytext=(i - 10, 600), arrowprops=dict(facecolor='blue', shrink=0.05))
+                res = 0
+                database.insert(id, res)
+            else:
+                plt.annotate('sad', xy=(i, 600), xytext=(i - 10, 600),arrowprops=dict(facecolor='black', shrink=0.05))
+                res = 2
+                database.insert(id, res)
+            print(result)
+            id += 1
+        plt.pause(0.001)
 
 
 if __name__ == '__main__':
-    train_module()
+    # train_module()
+    database.connect()
     predict_result()
 
